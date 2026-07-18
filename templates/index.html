@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý File PDF tài sản - Agribank Thọ Xuân</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary:#059669; --primary-dark:#047857; --accent:#86efac; --text-primary:#1f2937; --text-secondary:#64748b; --border:rgba(5,150,105,.18); --glass:rgba(255,255,255,.68); --success:#10B981; --error:#EF4444; --warning:#F59E0B; --shadow:0 14px 34px rgba(15,23,42,.10); --shadow-lg:0 24px 70px rgba(5,150,105,.14); --radius:16px; --radius-lg:28px; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif; color:var(--text-primary); min-height:100vh; padding:28px; background: radial-gradient(circle at 18px 18px, rgba(5,150,105,.075) 2px, transparent 2.8px), radial-gradient(circle at 58px 58px, rgba(134,239,172,.13) 2px, transparent 3px), linear-gradient(135deg,#f4fff8 0%,#e8f8ee 52%,#dff3e7 100%); background-size:76px 76px,76px 76px,auto; background-attachment:fixed; }
+        body::before, body::after { content:''; position:fixed; width:430px; height:430px; border-radius:999px; filter:blur(78px); pointer-events:none; z-index:-1; }
+        body::before { right:-120px; top:-130px; background:rgba(255,255,255,.62); } body::after { left:-150px; bottom:-160px; background:rgba(5,150,105,.16); }
+        .container { max-width:1480px; margin:0 auto; }
+        .header,.tabs,.card,.modal-content { background:var(--glass); border:1.5px solid var(--border); box-shadow:0 22px 55px rgba(5,150,105,.11),0 8px 24px rgba(15,23,42,.08); outline:1px solid rgba(255,255,255,.56); backdrop-filter:blur(24px) saturate(145%); -webkit-backdrop-filter:blur(24px) saturate(145%); }
+        .header { display:flex; justify-content:space-between; gap:18px; align-items:center; margin-bottom:20px; padding:24px; border-radius:var(--radius-lg); animation:fadeInDown .55s ease both; }
+        h1 { font-size:clamp(1.5rem,2.7vw,2.25rem); line-height:1.15; font-weight:800; letter-spacing:-.04em; background:linear-gradient(135deg,#059669 0%,#10b981 55%,#047857 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .subtitle { margin-top:8px; color:var(--text-secondary); font-weight:600; }
+        .user-info { text-align:right; color:var(--text-secondary); } .user-info p { margin-bottom:8px; color:var(--text-secondary); }
+        .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; border:0; border-radius:14px; padding:11px 18px; font-family:inherit; font-size:.88rem; font-weight:800; cursor:pointer; text-decoration:none; white-space:nowrap; transition:transform .22s ease,box-shadow .22s ease,background .22s ease,opacity .22s ease; }
+        .btn:hover { transform:translateY(-2px); box-shadow:0 14px 26px rgba(15,23,42,.18); } .btn:disabled { opacity:.65; cursor:not-allowed; transform:none; }
+        .btn-primary { color:#fff; background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%); } .btn-secondary { color:#334155; background:rgba(255,255,255,.78); border:1.5px solid rgba(5,150,105,.15); } .btn-success { color:#fff; background:linear-gradient(135deg,#10b981 0%,#059669 100%); } .btn-danger { color:#fff; background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%); } .btn-sm { padding:7px 11px; border-radius:11px; font-size:.76rem; }
+        .tabs { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px; padding:9px; border-radius:22px; animation:fadeInUp .55s .06s ease both; }
+        .tab { border:0; border-radius:16px; padding:14px 18px; background:rgba(255,255,255,.46); color:#475569; font-family:inherit; font-weight:800; cursor:pointer; transition:all .24s ease; }
+        .tab.active { background:rgba(255,255,255,.92); color:var(--primary); box-shadow:var(--shadow); }
+        .tab-content { display:none; } .tab-content.active { display:block; }
+        .card { padding:20px; border-radius:var(--radius-lg); animation:fadeInUp .55s .12s ease both; margin-bottom:24px; }
+        .toolbar { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:16px; flex-wrap:wrap; } .toolbar > div { flex-wrap:wrap; }
+        input[type="text"],input[type="date"],input[type="file"],input[type="password"],select,textarea { width:100%; padding:13px 15px; border:1.5px solid rgba(5,150,105,.16); border-radius:14px; background:rgba(255,255,255,.78); color:var(--text-primary); font-family:inherit; font-size:.9rem; outline:none; transition:all .22s ease; box-shadow:inset 0 0 0 1px rgba(255,255,255,.50),0 6px 18px rgba(15,23,42,.04); }
+        input:focus,select:focus,textarea:focus { background:#fff; border-color:rgba(5,150,105,.52); box-shadow:0 0 0 4px rgba(5,150,105,.12); transform:translateY(-1px); }
+        div[style*="overflow-x: auto"] { overflow-x:auto; border-radius:18px; border:1.5px solid rgba(5,150,105,.15); background:rgba(255,255,255,.52); box-shadow:inset 0 0 0 1px rgba(255,255,255,.50),0 6px 18px rgba(15,23,42,.04); }
+        table { width:100%; border-collapse:separate; border-spacing:0; font-size:.86rem; min-width:980px; } thead { background:rgba(255,255,255,.78); }
+        th,td { padding:13px 12px; text-align:left; border-bottom:1px solid rgba(5,150,105,.11); vertical-align:middle; } th { color:#334155; font-size:.75rem; text-transform:uppercase; letter-spacing:.045em; font-weight:800; border-bottom:1.5px solid rgba(5,150,105,.14); } tbody tr:hover { background:rgba(255,255,255,.72); }
+        .actions { display:flex; gap:6px; flex-wrap:wrap; } .badge { display:inline-flex; align-items:center; padding:5px 10px; border-radius:999px; font-size:.74rem; font-weight:800; border:1px solid rgba(255,255,255,.55); } .badge-success { background:rgba(16,185,129,.16); color:#047857; } .badge-warning { background:rgba(245,158,11,.18); color:#92400e; }
+        .empty-state { text-align:center; padding:52px 18px; color:var(--text-secondary); font-weight:700; } div[style*="background: #FEF3C7"] { background:rgba(255,255,255,.58)!important; border:1.5px solid rgba(5,150,105,.14); border-radius:16px!important; color:#334155; }
+        .modal { display:none; position:fixed; inset:0; z-index:1000; padding:22px; align-items:center; justify-content:center; background:rgba(15,23,42,.28); backdrop-filter:blur(10px); } .modal.show { display:flex; } .modal-content { width:min(92vw,640px); max-height:90vh; overflow-y:auto; padding:28px; border-radius:var(--radius-lg); }
+        .modal-header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:22px; } .modal-header h2 { font-size:1.35rem; font-weight:800; letter-spacing:-.02em; } .close-btn { width:40px; height:40px; border:0; border-radius:14px; background:rgba(255,255,255,.64); color:#475569; font-size:1.4rem; cursor:pointer; }
+        .form-group { margin-bottom:17px; } .form-group label { display:block; margin-bottom:9px; color:#334155; font-weight:800; }
+        #uploadProgress > div:last-child { background:rgba(255,255,255,.62)!important; } #progressBar { background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%)!important; }
+        @keyframes spin { to { transform: rotate(360deg); } } @keyframes fadeInDown { from{opacity:0;transform:translateY(-18px)} to{opacity:1;transform:translateY(0)} } @keyframes fadeInUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+        @media (max-width:768px) { body{padding:16px} .header{align-items:flex-start;flex-direction:column} .user-info{text-align:left;width:100%} .tabs{grid-template-columns:1fr} .toolbar{align-items:stretch} .toolbar>div{max-width:none!important;width:100%} .btn{width:100%} .modal-content{padding:22px} }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>📄 Quản lý File PDF tài sản</h1>
+        <p class="subtitle">Không gian quản lý sao kê, upload và tra cứu tài sản Agribank Thọ Xuân</p>
+      </div>
+      <div class="user-info">
+        <p>Xin chào, <strong id="currentUser">{{ full_name or username }}</strong></p>
+        <p style="font-size: 0.75rem; margin-bottom: 10px;">
+          {% if role == 'admin' %}<span class="badge badge-success">Admin</span>{% endif %}
+          {% if unit_code %}<span class="badge badge-warning">{{ unit_code }}</span>{% endif %}
+        </p>
+        {% if role == 'admin' %}<a href="/admin/users" class="btn btn-primary btn-sm" style="margin-right: 8px;">Quản lý User</a>{% endif %}
+        <a href="/logout" class="btn btn-secondary btn-sm">Đăng xuất</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="toolbar">
+        <div style="display:flex; gap:8px; flex:1; max-width:900px;">
+          <input type="text" id="searchAll" placeholder="🔍 Tìm theo Mã KH, Tên KH, Số LCL hoặc Serial..." style="flex:1;">
+          <select id="typeFilter" style="width: 180px;">
+            <option value="all">Tất cả</option>
+            <option value="bao-dam">TS bảo đảm</option>
+            <option value="giu-ho">TS giữ hộ</option>
+          </select>
+          <select id="fileFilter" style="width: 180px;">
+            <option value="all">Tất cả file</option>
+            <option value="no-file">Chưa có file</option>
+            <option value="has-file">Đã có file</option>
+          </select>
+          <button id="searchBtn" class="btn btn-primary" style="width: 140px;">🔎 Tìm kiếm</button>
+        </div>
+        {% if can_upload %}
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-primary" onclick="openImportModalByFilter()">📤 Thêm danh sách</button>
+          <button class="btn btn-success" onclick="openBatchAttachModal()">📎 Đính file theo lô</button>
+        </div>
+        {% endif %}
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table id="recordsTable">
+          <thead>
+            <tr>
+              <th style="width:50px;">STT</th>
+              <th>Loại TS</th>
+              <th>Mã KH</th>
+              <th>Tên KH</th>
+              <th>Số TS (LCL)</th>
+              <th>Ngày nhập</th>
+              <th>Sê-ri</th>
+              <th>Vị trí</th>
+              <th>Đơn vị</th>
+              <th>File PDF</th>
+              <th style="width: 180px;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="recordsBody"><tr><td colspan="11" class="empty-state">Đang tải...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="loadingModal" class="modal">
+    <div class="modal-content" style="max-width:420px; text-align:center;">
+      <div style="width:58px; height:58px; margin:0 auto 16px; border-radius:50%; border:5px solid rgba(5,150,105,.12); border-top-color:#059669; animation: spin 0.8s linear infinite;"></div>
+      <h2 style="margin-bottom:8px;">Đang tải dữ liệu</h2>
+      <div id="loadingText" style="color: var(--text-secondary); font-weight: 600;">Vui lòng chờ trong giây lát...</div>
+    </div>
+  </div>
+
+  <div id="batchAttachModal" class="modal"><div class="modal-content" style="max-width:800px;"><div class="modal-header"><h2>Đính file theo lô</h2><button class="close-btn" onclick="closeBatchAttachModal()">&times;</button></div><form id="batchAttachForm"><div class="form-group"><label>Chọn nhiều file PDF *</label><input type="file" id="batchPdfFiles" accept=".pdf" multiple required></div><div class="form-group"><label style="display:flex; align-items:center; gap:8px; cursor:pointer;"><input type="checkbox" id="allowOverwrite" style="width:auto;"><span>Cho phép ghi đè file cũ</span></label><small style="color:var(--text-secondary); display:block; margin-top:4px;">Nếu bật, file mới sẽ tự động thay thế file cũ. Nếu tắt, bỏ qua bản ghi đã có file.</small></div><div class="form-group" style="background: #FEF3C7; padding: 12px; border-radius: 8px; font-size: 0.875rem;"><strong>Lưu ý:</strong><ul style="margin: 8px 0 0 20px;"><li>Tên file phải chứa số LCL: <code>3511LCL201201759.pdf</code> hoặc <code>1201759.pdf</code></li><li>Hệ thống tự động tìm trong <strong>cả 2 nhóm tài sản</strong></li></ul></div><div id="uploadProgress" style="display:none; margin:16px 0;"><div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:.875rem;"><span id="progressText">Đang upload...</span><span id="progressPercent">0%</span></div><div style="width:100%; height:24px; background:#E2E8F0; border-radius:12px; overflow:hidden;"><div id="progressBar" style="height:100%; width:0%; transition:width .3s;"></div></div></div><div style="display:flex; gap:8px; justify-content:flex-end;"><button type="button" class="btn btn-secondary" onclick="closeBatchAttachModal()">Hủy</button><button type="submit" class="btn btn-primary" id="batchSubmitBtn">Đính file</button></div></form><div id="batchResults" style="display:none; margin-top:24px;"><h3 style="margin-bottom:16px;">Kết quả đính file</h3><div id="batchResultsContent"></div></div></div></div>
+  <div id="importModal" class="modal"><div class="modal-content"><div class="modal-header"><h2>Thêm danh sách từ Excel</h2><button class="close-btn" onclick="closeImportModal()">&times;</button></div><form id="importForm"><input type="hidden" id="importRecordType"><div class="form-group"><label>Chọn file Excel (.xls, .xlsx) *</label><input type="file" id="excelFile" accept=".xls,.xlsx" required></div><div class="form-group" style="background: #FEF3C7; padding: 12px; border-radius: 8px; font-size: 0.875rem;"><strong>Lưu ý:</strong><ul style="margin: 8px 0 0 20px;"><li>File Excel phải có cấu trúc giống mẫu Sao kê tài sản</li><li>Dòng tiêu đề phải bắt đầu bằng "STT"</li><li>Hệ thống sẽ tự động tạo Mã KH cho từng bản ghi</li></ul></div><div style="display:flex; gap:8px; justify-content:flex-end;"><button type="button" class="btn btn-secondary" onclick="closeImportModal()">Hủy</button><button type="submit" class="btn btn-primary">Import</button></div></form></div></div>
+  <div id="recordModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 id="modalTitle">Thêm bản ghi</h2><button class="close-btn" onclick="closeModal()">&times;</button></div><form id="recordForm"><input type="hidden" id="recordId"><input type="hidden" id="recordType">{% if role == 'admin' or can_view_all %}<div class="form-group"><label>Đơn vị</label><select id="unitCode" required>{% for code, num in units.items() %}<option value="{{ code }}">{{ code }}</option>{% endfor %}</select></div>{% endif %}<div class="form-group"><label>Tên khách hàng *</label><input type="text" id="tenKh" required></div><div class="form-group"><label>Số tài sản (LCL)</label><input type="text" id="soTsLcl"></div><div class="form-group"><label>Ngày nhập</label><input type="date" id="ngayNhap"></div><div class="form-group"><label>Sê-ri</label><input type="text" id="serial"></div><div class="form-group"><label>Vị trí</label><textarea id="viTri" rows="2"></textarea></div><div style="display:flex; gap:8px; justify-content:flex-end;"><button type="button" class="btn btn-secondary" onclick="closeModal()">Hủy</button><button type="submit" class="btn btn-primary">Lưu</button></div></form></div></div>
+  <div id="attachModal" class="modal"><div class="modal-content"><div class="modal-header"><h2>Đính kèm file PDF</h2><button class="close-btn" onclick="closeAttachModal()">&times;</button></div><form id="attachForm"><input type="hidden" id="attachRecordId"><input type="hidden" id="attachRecordType"><div class="form-group"><label>Chọn file PDF *</label><input type="file" id="pdfFile" accept=".pdf" required></div><div style="display:flex; gap:8px; justify-content:flex-end;"><button type="button" class="btn btn-secondary" onclick="closeAttachModal()">Hủy</button><button type="submit" class="btn btn-primary">Upload</button></div></form></div></div>
+
+  <script>
+    const canUpload = {{ 'true' if can_upload else 'false' }};
+    const canDelete = {{ 'true' if can_delete else 'false' }};
+    const userUnitCode = '{{ unit_code or "" }}';
+    let baoDamRecords = [];
+    let giuHoRecords = [];
+
+    function showLoading(text = 'Vui lòng chờ trong giây lát...') {
+      document.getElementById('loadingText').textContent = text;
+      document.getElementById('loadingModal').classList.add('show');
+    }
+    function hideLoading() { document.getElementById('loadingModal').classList.remove('show'); }
+    function esc(v){ return String(v ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+    function isCamCoLocation(value) {
+      return String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes('cam co');
+    }
+    function getAllRecords(){
+      return [...baoDamRecords.map(r => ({...r, record_type:'bao-dam', record_type_label:'TS bảo đảm'})), ...giuHoRecords.map(r => ({...r, record_type:'giu-ho', record_type_label:'TS giữ hộ'}))]
+        .filter(r => !isCamCoLocation(r.vi_tri));
+    }
+
+    async function loadAllData() {
+      showLoading('Đang tải dữ liệu tài sản...');
+      try {
+        const [baoDamRes, giuHoRes] = await Promise.all([fetch('/api/bao-dam'), fetch('/api/giu-ho')]);
+        if (!baoDamRes.ok) throw new Error('Không tải được dữ liệu TS bảo đảm: HTTP ' + baoDamRes.status);
+        if (!giuHoRes.ok) throw new Error('Không tải được dữ liệu TS giữ hộ: HTTP ' + giuHoRes.status);
+        baoDamRecords = await baoDamRes.json();
+        giuHoRecords = await giuHoRes.json();
+        filterRecords();
+      } catch (error) {
+        console.error('Error loading records:', error);
+        document.getElementById('recordsBody').innerHTML = '<tr><td colspan="11" class="empty-state">Không tải được dữ liệu từ server</td></tr>';
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function renderRecords(records) {
+      const tbody = document.getElementById('recordsBody');
+      if (!records.length) {
+        tbody.innerHTML = '<tr><td colspan="11" class="empty-state">Chưa có bản ghi nào</td></tr>';
+        return;
+      }
+      tbody.innerHTML = records.map((r, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td><span class="badge ${r.record_type === 'bao-dam' ? 'badge-success' : 'badge-warning'}">${r.record_type_label}</span></td>
+          <td><strong>${esc(r.ma_kh)}</strong></td>
+          <td>${esc(r.ten_kh)}</td>
+          <td>${esc(r.so_ts_lcl || '-')}</td>
+          <td>${esc(r.ngay_nhap || '-')}</td>
+          <td>${esc(r.serial || '-')}</td>
+          <td>${esc(r.vi_tri || '-')}</td>
+          <td>${esc(r.don_vi || '-')}</td>
+          <td>${r.pdf_file ? '<span class="badge badge-success">✓ Có file</span>' : '<span class="badge badge-warning">Chưa có</span>'}</td>
+          <td><div class="actions">${canUpload ? `<button class="btn btn-sm btn-primary" onclick="openAttachModal('${r.record_type}', ${r.id})">Đính kèm</button>` : ''}${r.pdf_file ? `<a href="/uploads/${esc(r.pdf_file)}" target="_blank" class="btn btn-sm btn-success">Xem</a>` : ''}${canDelete ? `<button class="btn btn-sm btn-danger" onclick="deleteRecord('${r.record_type}', ${r.id})">Xóa</button>` : ''}</div></td>
+        </tr>`).join('');
+    }
+
+    function filterRecords() {
+      const search = document.getElementById('searchAll').value.toLowerCase();
+      const typeFilter = document.getElementById('typeFilter').value;
+      const fileFilter = document.getElementById('fileFilter').value;
+      let filtered = getAllRecords().filter(r => {
+        const matchSearch = !search || String(r.ma_kh || '').toLowerCase().includes(search) || String(r.ten_kh || '').toLowerCase().includes(search) || String(r.so_ts_lcl || '').toLowerCase().includes(search) || String(r.serial || '').toLowerCase().includes(search);
+        const matchType = typeFilter === 'all' || r.record_type === typeFilter;
+        const matchFile = fileFilter === 'all' || (fileFilter === 'no-file' && !r.pdf_file) || (fileFilter === 'has-file' && r.pdf_file);
+        return matchSearch && matchType && matchFile;
+      });
+      renderRecords(filtered);
+    }
+
+    function openImportModal(type) { document.getElementById('importRecordType').value = type; document.getElementById('importForm').reset(); document.getElementById('importModal').classList.add('show'); }
+    function openImportModalByFilter() { const type = document.getElementById('typeFilter').value; if (type === 'all') return alert('Vui lòng chọn loại tài sản: TS bảo đảm hoặc TS giữ hộ trước khi import'); openImportModal(type); }
+    function closeImportModal() { document.getElementById('importModal').classList.remove('show'); }
+    function openAddModal(type) { document.getElementById('modalTitle').textContent = 'Thêm bản ghi mới'; document.getElementById('recordForm').reset(); document.getElementById('recordId').value = ''; document.getElementById('recordType').value = type; if (userUnitCode && document.getElementById('unitCode')) document.getElementById('unitCode').value = userUnitCode; document.getElementById('recordModal').classList.add('show'); }
+    function closeModal() { document.getElementById('recordModal').classList.remove('show'); }
+    function openAttachModal(type, id) { document.getElementById('attachRecordId').value = id; document.getElementById('attachRecordType').value = type; document.getElementById('attachForm').reset(); document.getElementById('attachModal').classList.add('show'); }
+    function closeAttachModal() { document.getElementById('attachModal').classList.remove('show'); }
+    function openBatchAttachModal() { document.getElementById('batchAttachForm').reset(); document.getElementById('batchResults').style.display = 'none'; document.getElementById('uploadProgress').style.display = 'none'; document.getElementById('batchAttachModal').classList.add('show'); }
+    function closeBatchAttachModal() { document.getElementById('batchAttachModal').classList.remove('show'); }
+
+    document.getElementById('searchBtn').addEventListener('click', filterRecords);
+    document.getElementById('searchAll').addEventListener('keydown', (e) => { if (e.key === 'Enter') filterRecords(); });
+    document.getElementById('typeFilter').addEventListener('change', () => {});
+    document.getElementById('fileFilter').addEventListener('change', () => {});
+
+    document.getElementById('batchAttachForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const files = document.getElementById('batchPdfFiles').files;
+      const allowOverwrite = document.getElementById('allowOverwrite').checked;
+      if (files.length === 0) return alert('Vui lòng chọn ít nhất 1 file PDF');
+      const formData = new FormData();
+      for (let i = 0; i < files.length; i++) formData.append('files', files[i]);
+      formData.append('allow_overwrite', allowOverwrite ? '1' : '0');
+      const submitBtn = document.getElementById('batchSubmitBtn');
+      const progressDiv = document.getElementById('uploadProgress');
+      const progressBar = document.getElementById('progressBar');
+      const progressText = document.getElementById('progressText');
+      const progressPercent = document.getElementById('progressPercent');
+      submitBtn.disabled = true; submitBtn.textContent = 'Đang xử lý...'; progressDiv.style.display = 'block'; progressText.textContent = `Đang upload ${files.length} file...`; progressPercent.textContent = '0%'; progressBar.style.width = '0%'; showLoading('Đang đính file PDF theo lô...');
+      const xhr = new XMLHttpRequest();
+      xhr.upload.addEventListener('progress', (e) => { if (e.lengthComputable) { const percent = Math.round((e.loaded / e.total) * 90); progressBar.style.width = percent + '%'; progressPercent.textContent = percent + '%'; progressText.textContent = `Đang upload ${files.length} file... (${Math.round(e.loaded/1024/1024)}MB / ${Math.round(e.total/1024/1024)}MB)`; } });
+      xhr.onload = async () => {
+        try {
+          if (xhr.status !== 200) throw new Error(`HTTP ${xhr.status}: ${xhr.statusText}`);
+          progressBar.style.width = '95%'; progressPercent.textContent = '95%'; progressText.textContent = 'Đang xử lý trên server...';
+          const result = JSON.parse(xhr.responseText);
+          progressBar.style.width = '100%'; progressPercent.textContent = '100%'; progressText.textContent = 'Hoàn thành!';
+          let html = `<div style="margin-bottom: 16px;"><strong>Tổng số file:</strong> ${result.total} | <strong style="color: var(--success)">Thành công:</strong> ${result.success.length} | <strong style="color: var(--error)">Lỗi:</strong> ${result.errors.length}</div>`;
+          if (result.success.length > 0) { html += '<div style="margin-bottom: 16px;"><strong style="color: var(--success)">✓ Đính file thành công:</strong><ul style="margin: 8px 0 0 20px; font-size: 0.875rem;">'; result.success.forEach(s => { html += `<li>${s.file} → LCL: ${s.lcl} (${s.table})${s.replaced ? ' <em style="color: var(--warning)">[Đã ghi đè]</em>' : ''}</li>`; }); html += '</ul></div>'; }
+          if (result.errors.length > 0) { html += '<div><strong style="color: var(--error)">✗ Lỗi:</strong><ul style="margin: 8px 0 0 20px; font-size: 0.875rem;">'; result.errors.forEach(er => { html += `<li>${er.file}${er.lcl ? ' (LCL: ' + er.lcl + ')' : ''} - ${er.reason}</li>`; }); html += '</ul></div>'; }
+          document.getElementById('batchResultsContent').innerHTML = html;
+          document.getElementById('batchResults').style.display = 'block';
+          await loadAllData();
+        } catch (error) {
+          alert('Lỗi kết nối: ' + error.message);
+          progressDiv.style.display = 'none';
+        } finally {
+          hideLoading(); submitBtn.disabled = false; submitBtn.textContent = 'Đính file';
+        }
+      };
+      xhr.onerror = () => { hideLoading(); alert('Lỗi kết nối: Network error'); submitBtn.disabled = false; submitBtn.textContent = 'Đính file'; progressDiv.style.display = 'none'; };
+      xhr.open('POST', '/api/batch-attach'); xhr.send(formData);
+    });
+
+    document.getElementById('importForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const type = document.getElementById('importRecordType').value;
+      const file = document.getElementById('excelFile').files[0];
+      if (!file) return alert('Vui lòng chọn file Excel');
+      const formData = new FormData(); formData.append('file', file);
+      const unitCodeEl = document.getElementById('importUnitCode'); if (unitCodeEl) formData.append('unit_code', unitCodeEl.value);
+      const submitBtn = document.getElementById('importForm').querySelector('button[type="submit"]');
+      try {
+        submitBtn.disabled = true; submitBtn.textContent = 'Đang import...'; showLoading('Đang import danh sách Excel...');
+        const response = await fetch(`/api/import-excel/${type}`, { method: 'POST', body: formData });
+        const result = await response.json();
+        if (result.success) { let msg = `Import thành công ${result.imported} bản ghi!`; if (result.errors && result.errors.length > 0) msg += '\n\nMột số lỗi:\n' + result.errors.join('\n'); alert(msg); closeImportModal(); await loadAllData(); }
+        else alert('Lỗi: ' + result.error);
+      } catch (error) { alert('Lỗi kết nối: ' + error.message); }
+      finally { hideLoading(); submitBtn.disabled = false; submitBtn.textContent = 'Import'; }
+    });
+
+    document.getElementById('recordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const type = document.getElementById('recordType').value;
+      const data = { ten_kh: document.getElementById('tenKh').value, so_ts_lcl: document.getElementById('soTsLcl').value, ngay_nhap: document.getElementById('ngayNhap').value, serial: document.getElementById('serial').value, vi_tri: document.getElementById('viTri').value };
+      const unitCodeEl = document.getElementById('unitCode'); if (unitCodeEl) data.unit_code = unitCodeEl.value;
+      try {
+        showLoading('Đang lưu bản ghi...');
+        const response = await fetch(`/api/${type}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+        const result = await response.json();
+        if (result.success) { alert('Thêm bản ghi thành công!'); closeModal(); await loadAllData(); }
+        else alert('Lỗi: ' + result.error);
+      } catch (error) { alert('Lỗi kết nối: ' + error.message); }
+      finally { hideLoading(); }
+    });
+
+    document.getElementById('attachForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const type = document.getElementById('attachRecordType').value;
+      const id = document.getElementById('attachRecordId').value;
+      const file = document.getElementById('pdfFile').files[0];
+      if (!file) return alert('Vui lòng chọn file PDF');
+      const send = async (url) => { const fd = new FormData(); fd.append('file', file); const res = await fetch(url, { method: 'POST', body: fd }); return { res, json: await res.json() }; };
+      try {
+        showLoading('Đang tải file PDF lên server...');
+        const { json: result } = await send(`/api/attach-pdf/${type}/${id}`);
+        if (result.warning === 'exists') {
+          hideLoading();
+          if (confirm(result.message)) {
+            showLoading('Đang thay thế file PDF...');
+            const { json: result2 } = await send(`/api/attach-pdf-confirm/${type}/${id}`);
+            if (result2.success) { alert('Thay thế file thành công!'); closeAttachModal(); await loadAllData(); }
+            else alert('Lỗi: ' + result2.error);
+          }
+        } else if (result.success) { alert('Đính kèm file thành công!'); closeAttachModal(); await loadAllData(); }
+        else alert('Lỗi: ' + result.error);
+      } catch (error) { alert('Lỗi kết nối: ' + error.message); }
+      finally { hideLoading(); }
+    });
+
+    async function deleteRecord(type, id) {
+      if (!confirm('Bạn có chắc muốn xóa bản ghi này?')) return;
+      try {
+        showLoading('Đang xóa bản ghi...');
+        const response = await fetch(`/api/${type}/${id}`, { method: 'DELETE' });
+        const result = await response.json();
+        if (result.success) await loadAllData(); else alert('Lỗi: ' + result.error);
+      } catch (error) { alert('Lỗi kết nối: ' + error.message); }
+      finally { hideLoading(); }
+    }
+
+    loadAllData();
+  </script>
+</body>
+</html>

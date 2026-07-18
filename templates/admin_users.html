@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý User - Agribank Thọ Xuân</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary:#059669; --primary-dark:#047857; --bg-secondary:rgba(255,255,255,.68); --text-primary:#1f2937; --text-secondary:#64748b; --border:rgba(5,150,105,.18); --success:#10B981; --error:#EF4444; --shadow:0 14px 34px rgba(15,23,42,.10); --shadow-lg:0 24px 70px rgba(5,150,105,.14); --radius:16px; --radius-lg:28px; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,sans-serif; background: radial-gradient(circle at 18px 18px, rgba(5,150,105,.075) 2px, transparent 2.8px), radial-gradient(circle at 58px 58px, rgba(134,239,172,.13) 2px, transparent 3px), linear-gradient(135deg,#f4fff8 0%,#e8f8ee 52%,#dff3e7 100%); background-size:76px 76px,76px 76px,auto; background-attachment:fixed; color:var(--text-primary); min-height:100vh; padding:28px; }
+        .container { max-width:1280px; margin:0 auto; }
+        .header,.card,.modal-content { background:var(--bg-secondary); border:1.5px solid var(--border); box-shadow:0 22px 55px rgba(5,150,105,.11),0 8px 24px rgba(15,23,42,.08); outline:1px solid rgba(255,255,255,.56); backdrop-filter:blur(24px) saturate(145%); -webkit-backdrop-filter:blur(24px) saturate(145%); }
+        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding:24px; border-radius:var(--radius-lg); }
+        h1 { font-size:clamp(1.45rem,2.5vw,2rem); font-weight:800; letter-spacing:-.03em; background:linear-gradient(135deg,#059669 0%,#10b981 55%,#047857 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .btn { padding:11px 18px; border:none; border-radius:14px; font-family:inherit; font-size:.875rem; font-weight:800; cursor:pointer; transition:all .22s ease; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:7px; }
+        .btn:hover { transform:translateY(-2px); box-shadow:0 14px 26px rgba(15,23,42,.18); } .btn-primary { background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%); color:white; } .btn-secondary { background:rgba(255,255,255,.78); color:#334155; border:1.5px solid rgba(5,150,105,.15); } .btn-success { background:linear-gradient(135deg,#10b981 0%,#059669 100%); color:white; } .btn-danger { background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%); color:white; } .btn-sm { padding:7px 11px; font-size:.76rem; border-radius:11px; }
+        .card { border-radius:var(--radius-lg); padding:20px; }
+        .toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:14px; flex-wrap:wrap; }
+        div[style*="overflow-x:auto"], div[style*="overflow-x: auto"] { border-radius:18px; border:1.5px solid rgba(5,150,105,.15); background:rgba(255,255,255,.52); box-shadow:inset 0 0 0 1px rgba(255,255,255,.50),0 6px 18px rgba(15,23,42,.04); }
+        table { width:100%; border-collapse:separate; border-spacing:0; font-size:.86rem; min-width:840px; } thead { background:rgba(255,255,255,.78); }
+        th,td { padding:13px 12px; text-align:left; border-bottom:1px solid rgba(5,150,105,.11); } th { font-weight:800; color:#334155; font-size:.75rem; text-transform:uppercase; letter-spacing:.045em; border-bottom:1.5px solid rgba(5,150,105,.14); } tbody tr:hover { background:rgba(255,255,255,.72); }
+        .modal { display:none; position:fixed; inset:0; background:rgba(15,23,42,.28); backdrop-filter:blur(10px); z-index:1000; align-items:center; justify-content:center; padding:22px; } .modal.show { display:flex; } .modal-content { border-radius:var(--radius-lg); padding:28px; max-width:600px; width:90%; max-height:90vh; overflow-y:auto; }
+        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; } .close-btn { width:40px; height:40px; background:rgba(255,255,255,.64); border:none; border-radius:14px; font-size:1.5rem; cursor:pointer; color:#475569; }
+        .form-group { margin-bottom:16px; } .form-group label { display:block; font-weight:800; margin-bottom:8px; color:#334155; }
+        input[type="text"],input[type="password"],select { width:100%; padding:13px 15px; border:1.5px solid rgba(5,150,105,.16); border-radius:14px; font-family:inherit; font-size:.9rem; background:rgba(255,255,255,.78); color:var(--text-primary); transition:all .22s ease; box-shadow:inset 0 0 0 1px rgba(255,255,255,.50),0 6px 18px rgba(15,23,42,.04); }
+        input:focus,select:focus { outline:none; border-color:rgba(5,150,105,.52); background:#fff; box-shadow:0 0 0 4px rgba(5,150,105,.12); transform:translateY(-1px); }
+        .checkbox-group { display:flex; gap:16px; flex-wrap:wrap; } .checkbox-group label { display:flex; align-items:center; gap:8px; font-weight:700; }
+        @media (max-width:768px) { body{padding:16px} .header{flex-direction:column;align-items:flex-start;gap:14px} .toolbar{flex-direction:column;align-items:stretch} table{font-size:.75rem;min-width:720px} th,td{padding:8px} }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>👥 Quản lý User</h1>
+            </div>
+            <div>
+                <a href="/" class="btn btn-secondary btn-sm">← Quay lại</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="toolbar">
+                <h2>Danh sách User</h2>
+                <button class="btn btn-primary" onclick="openAddModal()">+ Thêm User</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Họ tên</th>
+                        <th>Đơn vị</th>
+                        <th>Role</th>
+                        <th>Quyền</th>
+                        <th style="width: 150px;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <tr><td colspan="6" style="text-align: center; padding: 40px;">Đang tải...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Thêm User</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                
+                <div class="form-group">
+                    <label>Username *</label>
+                    <input type="text" id="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mật khẩu <span id="passwordHint">(bỏ trống nếu không đổi)</span></label>
+                    <input type="password" id="password">
+                </div>
+
+                <div class="form-group">
+                    <label>Họ tên</label>
+                    <input type="text" id="fullName">
+                </div>
+
+                <div class="form-group">
+                    <label>Đơn vị</label>
+                    <select id="unitCode">
+                        <option value="">-- Không chọn --</option>
+                        {% for code, num in units.items() %}
+                        <option value="{{ code }}">{{ code }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="role">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Quyền hạn</label>
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" id="canUpload">
+                            Upload/Tạo bản ghi
+                        </label>
+                        <label>
+                            <input type="checkbox" id="canDelete">
+                            Xóa bản ghi
+                        </label>
+                        <label>
+                            <input type="checkbox" id="canViewAll">
+                            Xem tất cả đơn vị
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let users = [];
+
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/users');
+                users = await response.json();
+                renderUsers();
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('userTableBody');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">Chưa có user nào</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td><strong>${u.username}</strong></td>
+                    <td>${u.full_name || '-'}</td>
+                    <td>${u.unit_code ? '<span class="badge badge-warning">' + u.unit_code + '</span>' : '-'}</td>
+                    <td>${u.role === 'admin' ? '<span class="badge badge-success">Admin</span>' : 'User'}</td>
+                    <td style="font-size: 0.75rem;">
+                        ${u.can_upload ? '✓ Upload ' : ''}
+                        ${u.can_delete ? '✓ Xóa ' : ''}
+                        ${u.can_view_all ? '✓ Xem tất cả' : ''}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="editUser(${u.id})">Sửa</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})">Xóa</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Thêm User';
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('username').disabled = false;
+            document.getElementById('password').required = true;
+            document.getElementById('passwordHint').style.display = 'none';
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        function editUser(id) {
+            const user = users.find(u => u.id === id);
+            if (!user) return;
+
+            document.getElementById('modalTitle').textContent = 'Sửa User';
+            document.getElementById('userId').value = user.id;
+            document.getElementById('username').value = user.username;
+            document.getElementById('username').disabled = true;
+            document.getElementById('password').value = '';
+            document.getElementById('password').required = false;
+            document.getElementById('passwordHint').style.display = 'inline';
+            document.getElementById('fullName').value = user.full_name || '';
+            document.getElementById('unitCode').value = user.unit_code || '';
+            document.getElementById('role').value = user.role;
+            document.getElementById('canUpload').checked = user.can_upload;
+            document.getElementById('canDelete').checked = user.can_delete;
+            document.getElementById('canViewAll').checked = user.can_view_all;
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').classList.remove('show');
+        }
+
+        document.getElementById('userForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userId = document.getElementById('userId').value;
+            const data = {
+                username: document.getElementById('username').value,
+                full_name: document.getElementById('fullName').value,
+                unit_code: document.getElementById('unitCode').value || null,
+                role: document.getElementById('role').value,
+                can_upload: document.getElementById('canUpload').checked,
+                can_delete: document.getElementById('canDelete').checked,
+                can_view_all: document.getElementById('canViewAll').checked
+            };
+
+            const password = document.getElementById('password').value;
+            if (password) {
+                data.password = password;
+            }
+
+            try {
+                const url = userId ? `/api/users/${userId}` : '/api/users';
+                const method = userId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert(userId ? 'Cập nhật thành công!' : 'Thêm user thành công!');
+                    closeModal();
+                    loadUsers();
+                } else {
+                    alert('Lỗi: ' + result.error);
+                }
+            } catch (error) {
+                alert('Lỗi kết nối: ' + error.message);
+            }
+        });
+
+        async function deleteUser(id) {
+            if (!confirm('Bạn có chắc muốn xóa user này?')) return;
+
+            try {
+                const response = await fetch(`/api/users/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Xóa thành công!');
+                    loadUsers();
+                } else {
+                    alert('Lỗi: ' + result.error);
+                }
+            } catch (error) {
+                alert('Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        loadUsers();
+    </script>
+</body>
+</html>

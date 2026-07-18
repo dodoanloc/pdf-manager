@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý File PDF</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366F1;
+            --primary-light: #818CF8;
+            --primary-dark: #4F46E5;
+            --secondary: #00D9FF;
+            --secondary-light: #67E8F9;
+            --accent: #F472B6;
+            --bg-primary: #F8FAFC;
+            --bg-secondary: #FFFFFF;
+            --bg-gradient: linear-gradient(135deg, #F0F9FF 0%, #F5F3FF 100%);
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --text-muted: #94A3B8;
+            --border: #E2E8F0;
+            --border-light: #F1F5F9;
+            --success: #10B981;
+            --error: #EF4444;
+            --warning: #F59E0B;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 24px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: var(--bg-primary);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: var(--bg-primary);
+        }
+
+        input[type="text"], input[type="file"], textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s;
+            margin-bottom: 16px;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .file-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .file-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .file-item:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow);
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .file-meta {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.875rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+                <h1>📄 Quản lý File PDF</h1>
+                <p class="subtitle">Upload, tìm kiếm và quản lý tài liệu PDF</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="color: var(--text-secondary); margin-bottom: 8px;">Xin chào, <strong id="currentUser">admin</strong></p>
+                <a href="/logout" class="btn btn-sm" style="background: var(--text-secondary); color: white; text-decoration: none; display: inline-block;">Đăng xuất</a>
+            </div>
+        </div>
+
+        <div class="card fade-in">
+            <h2 style="margin-bottom: 16px;">Upload File</h2>
+            <div class="upload-area" id="uploadArea">
+                <p style="font-size: 1.25rem; margin-bottom: 8px;">📤 Kéo thả file PDF vào đây</p>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">hoặc click để chọn file</p>
+                <input type="file" id="fileInput" accept=".pdf" style="display: none;">
+            </div>
+            <textarea id="description" placeholder="Mô tả file (tùy chọn)" rows="3"></textarea>
+            <button class="btn btn-primary" id="uploadBtn">Upload File</button>
+        </div>
+
+        <div class="card fade-in">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm theo tên file, người upload, mô tả...">
+                <button class="btn btn-primary" id="searchBtn">Tìm kiếm</button>
+            </div>
+
+            <div id="fileList" class="file-list">
+                <div class="loading">Không có file nào</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const fileList = document.getElementById('fileList');
+        let selectedFile = null;
+
+        // Load current user
+        async function loadCurrentUser() {
+            try {
+                const response = await fetch('/api/me');
+                const data = await response.json();
+                if (data.authenticated) {
+                    document.getElementById('currentUser').textContent = data.username;
+                }
+            } catch (error) {
+                console.error('Failed to load user:', error);
+            }
+        }
+
+        loadCurrentUser();
+
+        // Upload area click
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type === 'application/pdf') {
+                selectedFile = files[0];
+                uploadArea.querySelector('p').textContent = `✅ ${files[0].name}`;
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                selectedFile = e.target.files[0];
+                uploadArea.querySelector('p').textContent = `✅ ${selectedFile.name}`;
+            }
+        });
+
+        // Upload file
+        uploadBtn.addEventListener('click', async () => {
+            if (!selectedFile) {
+                alert('Vui lòng chọn file PDF');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('description', document.getElementById('description').value);
+
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Upload thành công!');
+                    selectedFile = null;
+                    fileInput.value = '';
+                    document.getElementById('description').value = '';
+                    uploadArea.querySelector('p').textContent = '📤 Kéo thả file PDF vào đây';
+                    loadFiles();
+                } else {
+                    alert('Lỗi: ' + result.error);
+                }
+            } catch (error) {
+                alert('Lỗi kết nối: ' + error.message);
+            }
+        });
+
+        // Load files
+        async function loadFiles(query = '') {
+            try {
+                const url = query ? `/api/search?q=${encodeURIComponent(query)}` : '/api/files';
+                const response = await fetch(url);
+                const files = await response.json();
+                
+                if (files.length === 0) {
+                    fileList.innerHTML = '<div class="loading">Không có file nào</div>';
+                    return;
+                }
+
+                fileList.innerHTML = files.map(file => `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-name">📄 ${file.original_name}</div>
+                            <div class="file-meta">
+                                ${formatFileSize(file.file_size)} • 
+                                ${new Date(file.upload_date).toLocaleString('vi-VN')} • 
+                                ${file.uploaded_by || 'Anonymous'}
+                                ${file.description ? ' • ' + file.description : ''}
+                            </div>
+                        </div>
+                        <div class="file-actions">
+                            <a href="/uploads/${file.filename}" target="_blank" class="btn btn-primary btn-sm">Xem</a>
+                            <button class="btn btn-danger btn-sm" onclick="deleteFile(${file.id})">Xóa</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                fileList.innerHTML = '<div class="loading">Lỗi tải danh sách file</div>';
+            }
+        }
+
+        // Delete file
+        async function deleteFile(id) {
+            if (!confirm('Bạn có chắc muốn xóa file này?')) return;
+            
+            try {
+                const response = await fetch(`/api/delete/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (result.success) {
+                    loadFiles();
+                } else {
+                    alert('Lỗi: ' + result.error);
+                }
+            } catch (error) {
+                alert('Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        // Search
+        searchBtn.addEventListener('click', () => {
+            loadFiles(searchInput.value);
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loadFiles(searchInput.value);
+            }
+        });
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        // Initial load
+        loadFiles();
+    </script>
+</body>
+</html>

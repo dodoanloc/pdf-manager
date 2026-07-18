@@ -1,0 +1,45 @@
+# Hermes Webapp Factory defaults
+.venv/
+venv/
+__pycache__/
+*.pyc
+node_modules/
+.env
+*.log
+backups/
+data/uploads/
+*.tmp
+.DS_Store
+# Runtime/data - do not commit real data
+logs/
+uploads/
+data/
+backend/data/
+backend/data/uploads/
+backend/backups/
+frontend-backups/
+frontend-records-backups/
+frontend-records-io-backups/
+rollback-backups/
+.brv/
+*.pyo
+*.sqlite
+*.sqlite3
+*.db
+*.db.*
+*.dump
+*.dump.sha256
+# Vendored Python dependencies; use requirements instead
+backend/defusedxml/
+backend/fontTools/
+backend/fpdf/
+backend/pytesseract/
+backend/vendor/
+# Local generated screenshots/cache
+screenshots/
+*.bak
+*.bak-*
+*.old
+*.backup_*
+*-backups/
+*.before-*

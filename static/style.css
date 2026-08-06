@@ -1,0 +1,105 @@
+/* Additional styles for PDF Manager */
+body {
+    background: linear-gradient(135deg, #F0F9FF 0%, #F5F3FF 100%);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.card {
+    backdrop-filter: blur(10px);
+}
+
+.upload-area {
+    background: rgba(99, 102, 241, 0.02);
+}
+
+.file-item {
+    border-left: 3px solid transparent;
+}
+
+.file-item:hover {
+    border-left-color: #6366F1;
+}
+
+h1::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(135deg, #00D9FF 0%, #6366F1 100%);
+    margin-top: 8px;
+    border-radius: 2px;
+}
+
+.btn-success {
+    background: #10B981;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 40px;
+    color: var(--text-secondary);
+}
+
+.empty-state svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 16px 24px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+}
+
+.toast-success {
+    border-left: 4px solid var(--success);
+}
+
+.toast-error {
+    border-left: 4px solid var(--error);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 16px;
+    }
+    
+    .search-box {
+        flex-direction: column;
+    }
+    
+    .file-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .file-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}

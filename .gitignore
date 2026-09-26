@@ -46,3 +46,10 @@ screenshots/
 # Local code intelligence indexes
 .codegraph/
 .code-review-graph/
+
+*.db-*
+*.sqlite*
+*.bak*
+*.env*
+data/*.db
+deploy/*.env*
